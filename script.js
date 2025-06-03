@@ -1,17 +1,26 @@
 // Menu items data
 const menuItems = [
-    { id: 1, name: 'Porota', price: 20, image: 'https://placehold.co/400x300/FF6B6B/white?text=Porota' },
-    { id: 2, name: 'Guguni', price: 10, image: 'https://placehold.co/400x300/4ECDC4/white?text=Guguni' },
-    { id: 3, name: 'Cigarette', price: 10, image: 'https://placehold.co/400x300/FF6B6B/white?text=Cigarette' },
-    { id: 4, name: 'Water', price: 10, image: 'https://placehold.co/400x300/4ECDC4/white?text=Water' },
-    { id: 5, name: 'Pan Egg', price: 15, image: 'https://placehold.co/400x300/FF6B6B/white?text=Pan+Egg' },
-    { id: 6, name: 'Roti', price: 20, image: 'https://placehold.co/400x300/4ECDC4/white?text=Roti' },
-    { id: 7, name: 'Maggi', price: 20, image: 'https://placehold.co/400x300/FF6B6B/white?text=Maggi' },
-    { id: 8, name: 'Papor', price: 5, image: 'https://placehold.co/400x300/4ECDC4/white?text=Papor' },
-    { id: 9, name: 'Pan', price: 5, image: 'https://placehold.co/400x300/FF6B6B/white?text=Pan' },
-    { id: 10, name: 'Puri', price: 10, image: 'https://placehold.co/400x300/4ECDC4/white?text=Puri' },
-    { id: 11, name: 'Sugar Cane Juice', price: 20, image: 'https://placehold.co/400x300/FF6B6B/white?text=Sugar+Cane+Juice' },
-    { id: 12, name: 'Chow Mein', price: 60, image: 'https://placehold.co/400x300/4ECDC4/white?text=Chow+Mein' }
+    { id: 1, name: 'Milk Tea (गायखेर साहा)', price: 10, image: 'cuting chi.jpg' },
+    { id: 2, name: 'Lal tea (लाल साहा)', price: 10, image: 'lal.jpg' },
+    { id: 15, name: 'Biscuit', price: 15, image: 'bis.jpeg' },
+    { id: 10, name: 'Papor (पापोर)', price: 5, image: 'papor.jpeg' },
+    { id: 4, name: 'Guguni (गुगुनी)', price: 10, image: 'guguni.jpeg' },
+    { id: 7, name: 'Pan Egg (दावदै)', price: 15, image: 'egg.jpeg' },
+    { id: 9, name: 'Maggi (मेगि)', price: 20, image: 'Maggi.jpg' },
+    { id: 6, name: 'Water Bottle (दै बोतल)', price: 10, image: 'water.jpeg' },
+    //{ id: 3, name: 'Porota (परोठा)', price: 20, image: 'porota.jpg' },
+    
+    { id: 5, name: 'Cigarette (चिगरेट)', price: 10, image: 'ch.jpg' },
+    
+    
+    //{ id: 8, name: 'Roti (रोटी)', price: 10, image: 'roti.webp' },
+    
+    
+    { id: 11, name: 'Pan (गय पाथै)', price: 5, image: 'goy.jpeg' }
+    //{ id: 12, name: 'Puri (पुरी)', price: 10, image: 'puri.jpg' },
+    //{ id: 13, name: 'Sugar Cane Juice (खुसेर बिदै)', price: 20, image: 'suger.jpg' },
+   // { id: 14, name: 'Chow Mein (चाउ मेन)', price: 60, image: 'R.jpg' },
+    
 ];
 
 // DOM Elements
@@ -96,8 +105,9 @@ function renderCustomerList() {
             <td>${formatDate(data.lastTransaction)}</td>
             <td>${data.totalDue > 0 ? '<span class="status-pending">Pending</span>' : '<span class="status-paid">Paid</span>'}</td>
             <td>
-                <button class="action-btn" onclick="editCustomer('${name}')">Edit</button>
-                <button class="action-btn delete" onclick="deleteCustomer('${name}')">Delete</button>
+               <!-- <button class="action-btn" onclick="editCustomer('${name}')">Edit</button> -->
+                <button class="action-btn" onclick="printCustomerDues('${name}', groupTransactionsByDate(customers['${name}'].transactions))">Print</button>
+               <!-- <button class="action-btn delete" onclick="deleteCustomer('${name}')">Delete</button> -->
             </td>
         `;
         customerList.appendChild(row);
@@ -107,7 +117,8 @@ function renderCustomerList() {
 
 function showCustomerDetails(customerName) {
     const modal = document.getElementById('customer-modal');
-    const modalCustomerName = document.getElementById('modal-customer-name');
+    const modalCustomerName = document.getElemen
+    tById('modal-customer-name');
     const modalTotalDue = document.getElementById('modal-total-due');
     const vouchersContainer = document.querySelector('.vouchers-by-date');
     
@@ -147,6 +158,10 @@ function showCustomerDetails(customerName) {
         `;
         vouchersContainer.appendChild(dateGroup);
     });
+    
+    // Add print button event listener
+    const printButton = document.getElementById('print-customer-dues');
+    printButton.onclick = () => printCustomerDues(customerName, groupedTransactions);
     
     modal.style.display = 'block';
 }
@@ -518,6 +533,74 @@ function addNewCustomer(customerName, dueAmount) {
         alert('Error saving customer. Please try again.');
         return false;
     }
+}
+
+// Function to print customer dues
+function printCustomerDues(customerName, groupedTransactions) {
+    // Create a new window for printing
+    const printWindow = window.open('', '_blank');
+    
+    // Generate the print content
+    const printContent = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Dues Report - ${customerName}</title>
+            <style>
+                body { font-family: Arial, sans-serif; padding: 20px; }
+                h1 { color: #333; }
+                .header { margin-bottom: 20px; }
+                .date-group { margin-bottom: 30px; }
+                table { width: 100%; border-collapse: collapse; margin-bottom: 15px; }
+                th, td { padding: 8px; text-align: left; border-bottom: 1px solid #ddd; }
+                th { background-color: #f8f8f8; }
+                .total { font-weight: bold; margin-top: 20px; }
+                @media print {
+                    body { padding: 0; }
+                    button { display: none; }
+                }
+            </style>
+        </head>
+        <body>
+            <div class="header">
+                <h1>Dues Report</h1>
+                <p><strong>Customer Name:</strong> ${customerName}</p>
+                <p><strong>Total Due Amount:</strong> ₹${customers[customerName].totalDue.toFixed(2)}</p>
+                <p><strong>Generated on:</strong> ${new Date().toLocaleString()}</p>
+            </div>
+            ${Object.entries(groupedTransactions).map(([date, transactions]) => `
+                <div class="date-group">
+                    <h3>${formatDate(date)}</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Item</th>
+                                <th>Quantity</th>
+                                <th>Price</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${transactions.map(t => t.items.map(item => `
+                                <tr>
+                                    <td>${item.name}</td>
+                                    <td>${item.quantity}</td>
+                                    <td>₹${item.price.toFixed(2)}</td>
+                                    <td>₹${(item.quantity * item.price).toFixed(2)}</td>
+                                </tr>
+                            `).join('')).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `).join('')}
+            <button onclick="window.print()" style="padding: 10px 20px; margin-top: 20px;">Print</button>
+        </body>
+        </html>
+    `;
+    
+    // Write the content to the new window and trigger print
+    printWindow.document.write(printContent);
+    printWindow.document.close();
 }
 
 // Initialize dues when the page loads
