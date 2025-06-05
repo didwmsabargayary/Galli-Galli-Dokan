@@ -5,15 +5,16 @@ const menuItems = [
     { id: 15, name: 'Biscuit (बिस्कुट)', price: 15, image: 'bis.jpeg' },
     { id: 10, name: 'Papor (पापोर)', price: 5, image: 'papor.jpeg' },
     { id: 4, name: 'Guguni (गुगुनी)', price: 10, image: 'guguni.jpeg' },
-    { id: 8, name: 'Roti (रोटी)', price: 10, image: 'roti.webp' },
+    { id: 3, name: 'Porota (परोठा)', price: 20, image: 'porota.jpg' },
     { id: 7, name: 'Pan Egg (दावदै)', price: 15, image: 'egg.jpeg' },
     { id: 9, name: 'Maggi (मेगि)', price: 20, image: 'Maggi.jpg' },
     { id: 6, name: 'Water Bottle (दै बोतल)', price: 10, image: 'water.jpeg' },
     //{ id: 3, name: 'Porota (परोठा)', price: 20, image: 'porota.jpg' },
     { id: 5, name: 'Cigarette (चिगरेट)', price: 10, image: 'ch.jpg' },
-     { id: 11, name: 'Pan (गय पाथै)', price: 5, image: 'goy.jpeg' }
+     //{ id: 8, name: 'Roti (रोटी)', price: 10, image: 'roti.webp' },         
+    { id: 11, name: 'Pan (गय पाथै)', price: 5, image: 'goy.jpeg' }
     //{ id: 12, name: 'Puri (पुरी)', price: 10, image: 'puri.jpg' },
-    //{ id: 13, name: 'Sugar Cane Juice (खुसेर बिदै)', price: 20, image: 'suger.jpg' }
+   // { id: 13, name: 'Sugar Cane Juice (खुसेर बिदै)', price: 20, image: 'suger.jpg' }
    // { id: 14, name: 'Chow Mein (चाउ मेन)', price: 60, image: 'R.jpg' },
     
 ];
@@ -316,34 +317,65 @@ function formatDate(dateString) {
 
 // Initialize menu grid
 function initializeMenu() {
-    menuGrid.innerHTML = menuItems.map(item => `
-        <div class="menu-item">
+    const menuGrid = document.querySelector('.menu-grid');
+    menuGrid.innerHTML = '';
+    
+    menuItems.forEach(item => {
+        const menuItem = document.createElement('div');
+        menuItem.className = 'menu-item';
+        menuItem.innerHTML = `
             <img src="${item.image}" alt="${item.name}">
             <h3>${item.name}</h3>
-            <p class="price">₹${item.price}</p>
-        </div>
-    `).join('');
+            <p class="price">₹${item.price.toFixed(2)}</p>
+        `;
+        menuGrid.appendChild(menuItem);
+    });
 }
 
-// Initialize item selection list
+// Function to initialize items list for invoice
 function initializeItemsList() {
-    itemsList.innerHTML = menuItems.map(item => `
-        <div class="item-checkbox">
-            <input type="checkbox" id="item-${item.id}" data-id="${item.id}" data-price="${item.price}">
-            <label for="item-${item.id}">${item.name} - ₹${item.price}</label>
-            <input type="number" class="quantity-input" min="1" value="1" disabled>
-        </div>
-    `).join('');
+    const itemsList = document.querySelector('.items-list');
+    if (!itemsList) return;
+    
+    itemsList.innerHTML = '';
+    menuItems.forEach(item => {
+        const itemDiv = document.createElement('div');
+        itemDiv.className = 'item-checkbox';
+        itemDiv.innerHTML = `
+            <input type="checkbox" id="item-${item.id}" data-id="${item.id}" data-name="${item.name}" data-price="${item.price}">
+            <label for="item-${item.id}">${item.name} - ₹${item.price.toFixed(2)}</label>
+            <input type="number" class="quantity-input" value="1" min="1" style="display: none;">
+        `;
+        itemsList.appendChild(itemDiv);
+
+        const checkbox = itemDiv.querySelector('input[type="checkbox"]');
+        const quantityInput = itemDiv.querySelector('.quantity-input');
+
+        checkbox.addEventListener('change', function() {
+            quantityInput.style.display = this.checked ? 'inline-block' : 'none';
+            updateSelectedItems();
+        });
+
+        quantityInput.addEventListener('input', updateSelectedItems);
+    });
 }
 
-// Tab switching functionality
-tabButtons.forEach(button => {
-    button.addEventListener('click', () => {
-        tabButtons.forEach(btn => btn.classList.remove('active'));
-        tabContents.forEach(content => content.classList.remove('active'));
-        
-        button.classList.add('active');
-        document.getElementById(button.dataset.tab).classList.add('active');
+// Initialize dues when the page loads
+document.addEventListener('DOMContentLoaded', () => {
+    initializeMenu();
+    initializeItemsList();
+    initializeData();
+    
+    // Add tab switching functionality
+    tabButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            tabButtons.forEach(btn => btn.classList.remove('active'));
+            tabContents.forEach(content => content.classList.remove('active'));
+            
+            button.classList.add('active');
+            const tabId = button.getAttribute('data-tab');
+            document.getElementById(tabId).classList.add('active');
+        });
     });
 });
 
@@ -397,66 +429,92 @@ function displaySelectedItems(items) {
 
 // Generate and display invoice
 generateInvoiceBtn.addEventListener('click', () => {
-    const items = [];
-    let total = 0;
+    try {
+        const items = [];
+        let total = 0;
 
-    itemsList.querySelectorAll('.item-checkbox').forEach(item => {
-        const checkbox = item.querySelector('input[type="checkbox"]');
-        if (checkbox.checked) {
-            const quantity = parseInt(item.querySelector('.quantity-input').value);
-            const price = parseInt(checkbox.dataset.price);
-            const itemTotal = quantity * price;
-            
-            items.push({
-                name: checkbox.nextElementSibling.textContent.split(' - ')[0],
-                quantity,
-                price,
-                total: itemTotal
-            });
-            
-            total += itemTotal;
+        // Check if any items are selected
+        const selectedCheckboxes = itemsList.querySelectorAll('input[type="checkbox"]:checked');
+        if (selectedCheckboxes.length === 0) {
+            alert('Please select at least one item to generate an invoice.');
+            return;
         }
-    });
 
-    const invoiceHTML = `
-        <div class="invoice-content">
-            <h3>Swima Oma Dokand</h3>
-            <p>Date: ${new Date().toLocaleDateString()}</p>
-            <p>Time: ${new Date().toLocaleTimeString()}</p>
-            <hr>
-            <table style="width: 100%; margin-top: 1rem;">
-                <thead>
-                    <tr>
-                        <th style="text-align: left;">Item</th>
-                        <th>Qty</th>
-                        <th>Price</th>
-                        <th style="text-align: right;">Total</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    ${items.map(item => `
-                        <tr>
-                            <td>${item.name}</td>
-                            <td style="text-align: center;">${item.quantity}</td>
-                            <td style="text-align: center;">₹${item.price}</td>
-                            <td style="text-align: right;">₹${item.total}</td>
-                        </tr>
-                    `).join('')}
-                </tbody>
-                <tfoot>
-                    <tr>
-                        <td colspan="3" style="text-align: right;"><strong>Total:</strong></td>
-                        <td style="text-align: right;"><strong>₹${total}</strong></td>
-                    </tr>
-                </tfoot>
-            </table>
-            <hr>
-            <p style="text-align: center; margin-top: 1rem;">Thank you for your business!</p>
-        </div>
-    `;
+        itemsList.querySelectorAll('.item-checkbox').forEach(item => {
+            const checkbox = item.querySelector('input[type="checkbox"]');
+            if (checkbox.checked) {
+                const quantityInput = item.querySelector('.quantity-input');
+                const quantity = parseInt(quantityInput.value) || 0;
+                
+                if (quantity <= 0) {
+                    throw new Error(`Please enter a valid quantity for ${checkbox.dataset.name}`);
+                }
 
-    invoiceDetails.innerHTML = invoiceHTML;
-    modal.style.display = 'block';
+                const price = parseInt(checkbox.dataset.price);
+                const itemTotal = quantity * price;
+                
+                items.push({
+                    name: checkbox.dataset.name,
+                    quantity,
+                    price,
+                    total: itemTotal
+                });
+                
+                total += itemTotal;
+            }
+        });
+
+        const invoiceHTML = `
+            <div class="invoice-content" style="padding: 15px; max-width: 100%; margin: 0 auto; font-size: 14px;">
+                <div style="text-align: center; margin-bottom: 15px;">
+                    <img src="./logo.png.png" alt="Galli Galli Dokand Logo" style="max-width: 80px; height: auto; margin-bottom: 8px;">
+                    <h3 style="color: #333; margin-bottom: 8px; font-size: 18px;">Galli Galli Dokand</h3>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 15px; flex-wrap: wrap; gap: 8px;">
+                    <p style="margin: 0;">Date: ${new Date().toLocaleDateString()}</p>
+                    <p style="margin: 0;">Time: ${new Date().toLocaleTimeString()}</p>
+                </div>
+                <hr style="border: none; border-top: 1px solid #ddd; margin: 10px 0;">
+                <div style="overflow-x: auto; -webkit-overflow-scrolling: touch;">
+                    <table style="width: 100%; border-collapse: collapse; margin: 15px 0; min-width: 300px;">
+                        <thead>
+                            <tr>
+                                <th style="text-align: left; padding: 8px; background-color: #f0f0f0; border: 1px solid #ddd; font-size: 14px;">Item</th>
+                                <th style="text-align: center; padding: 8px; background-color: #f0f0f0; border: 1px solid #ddd; font-size: 14px;">Qty</th>
+                                <th style="text-align: center; padding: 8px; background-color: #f0f0f0; border: 1px solid #ddd; font-size: 14px;">Price</th>
+                                <th style="text-align: right; padding: 8px; background-color: #f0f0f0; border: 1px solid #ddd; font-size: 14px;">Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${items.map(item => `
+                                <tr>
+                                    <td style="text-align: left; padding: 8px; border: 1px solid #ddd; font-size: 14px;">${item.name}</td>
+                                    <td style="text-align: center; padding: 8px; border: 1px solid #ddd; font-size: 14px;">${item.quantity}</td>
+                                    <td style="text-align: center; padding: 8px; border: 1px solid #ddd; font-size: 14px;">₹${item.price}</td>
+                                    <td style="text-align: right; padding: 8px; border: 1px solid #ddd; font-size: 14px;">₹${item.total}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="3" style="text-align: right; padding: 8px; border: 1px solid #ddd; font-weight: bold; font-size: 14px;">Total:</td>
+                                <td style="text-align: right; padding: 8px; border: 1px solid #ddd; font-weight: bold; font-size: 14px;">₹${total}</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+                <hr style="border: none; border-top: 1px solid #ddd; margin: 10px 0;">
+                <div style="text-align: center; margin-top: 20px;">
+                    <p style="font-size: 14px;">Thank you for your business!</p>
+                </div>
+            </div>
+        `;
+
+        invoiceDetails.innerHTML = invoiceHTML;
+        modal.style.display = 'block';
+    } catch (error) {
+        alert(error.message || 'An error occurred while generating the invoice.');
+    }
 });
 
 // Modal close functionality
@@ -470,16 +528,74 @@ window.addEventListener('click', (e) => {
     }
 });
 
-// Print invoice
+// Print invoice functionality
 printInvoiceBtn.addEventListener('click', () => {
-    const printWindow = window.open('', '', 'width=800,height=600');
-    printWindow.document.write('<html><head><title>Invoice - Swima Oma Dokand</title>');
-    printWindow.document.write('<style>body { font-family: Arial, sans-serif; padding: 20px; }</style>');
-    printWindow.document.write('</head><body>');
-    printWindow.document.write(invoiceDetails.innerHTML);
-    printWindow.document.write('</body></html>');
+    const printWindow = window.open('', '_blank');
+    const modalContent = modal.querySelector('.modal-content');
+    const invoiceContent = modalContent.querySelector('.invoice-content').cloneNode(true);
+    
+    const printContent = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+            <title>Invoice - Galli Galli Dokand</title>
+            <style>
+                @page {
+                    size: A4;
+                    margin: 1cm;
+                }
+                body {
+                    font-family: Arial, sans-serif;
+                    line-height: 1.6;
+                    margin: 0;
+                    padding: 0;
+                    font-size: 14px;
+                }
+                @media screen {
+                    body {
+                        padding: 15px;
+                    }
+                    .invoice-content {
+                        max-width: 100%;
+                        margin: 0 auto;
+                    }
+                }
+                @media screen and (min-width: 768px) {
+                    body {
+                        padding: 30px;
+                        font-size: 16px;
+                    }
+                    .invoice-content {
+                        max-width: 800px;
+                    }
+                }
+                @media print {
+                    body {
+                        width: 100%;
+                        margin: 0;
+                        padding: 0;
+                    }
+                    .invoice-content {
+                        page-break-inside: avoid;
+                    }
+                }
+            </style>
+        </head>
+        <body>
+            ${invoiceContent.outerHTML}
+            <script>
+                window.onload = () => {
+                    window.print();
+                    setTimeout(() => window.close(), 500);
+                };
+            </script>
+        </body>
+        </html>
+    `;
+
+    printWindow.document.write(printContent);
     printWindow.document.close();
-    printWindow.print();
 });
 
 // Delete customer function
@@ -603,3 +719,111 @@ document.addEventListener('DOMContentLoaded', () => {
     initializeMenu();
     initializeItemsList();
 }); 
+
+// Audio Player functionality
+const bgMusic = document.getElementById('bgMusic');
+const playPauseBtn = document.getElementById('playPauseBtn');
+const nextBtn = document.getElementById('nextBtn');
+
+// List of music files
+const musicFiles = ['d.mp3'];
+let currentTrackIndex = 0;
+let isPlaying = false;
+
+// Function to attempt playing music
+function tryPlayMusic() {
+    if (!bgMusic) {
+        console.error('Audio element not found!');
+        return;
+    }
+
+    // Check if the audio file is actually loaded
+    if (bgMusic.networkState === HTMLMediaElement.NETWORK_NO_SOURCE) {
+        console.error('Audio file not found or cannot be loaded!');
+        return;
+    }
+
+    bgMusic.muted = false;
+    bgMusic.volume = 1;
+
+    // Load the audio file if not loaded
+    if (bgMusic.readyState === 0) {
+        bgMusic.load();
+    }
+
+    const playPromise = bgMusic.play();
+    if (playPromise !== undefined) {
+        playPromise
+            .then(() => {
+                isPlaying = true;
+                updatePlayPauseButton();
+            })
+            .catch(error => {
+                console.error('Playback failed:', error);
+                isPlaying = false;
+                updatePlayPauseButton();
+            });
+    }
+}
+
+// Function to pause music
+function pauseMusic() {
+    if (!bgMusic) return;
+    bgMusic.pause();
+    isPlaying = false;
+    updatePlayPauseButton();
+}
+
+// Function to update play/pause button text
+function updatePlayPauseButton() {
+    if (!playPauseBtn) return;
+    playPauseBtn.textContent = isPlaying ? 'Pause' : 'Play';
+}
+
+// Play/Pause button functionality
+playPauseBtn.addEventListener('click', () => {
+    if (!bgMusic) return;
+    
+    if (isPlaying) {
+        pauseMusic();
+    } else {
+        tryPlayMusic();
+    }
+});
+
+// Next button functionality
+nextBtn.addEventListener('click', () => {
+    currentTrackIndex = (currentTrackIndex + 1) % musicFiles.length;
+    bgMusic.src = musicFiles[currentTrackIndex];
+    if (isPlaying) {
+        tryPlayMusic();
+    }
+});
+
+// Update play/pause button text based on audio state
+bgMusic.addEventListener('play', () => {
+    isPlaying = true;
+    updatePlayPauseButton();
+});
+
+bgMusic.addEventListener('pause', () => {
+    isPlaying = false;
+    updatePlayPauseButton();
+});
+
+bgMusic.addEventListener('ended', () => {
+    isPlaying = false;
+    updatePlayPauseButton();
+});
+
+// Try to play music on various events
+document.addEventListener('DOMContentLoaded', () => {
+    updatePlayPauseButton();
+});
+
+// Add error handling for audio loading
+bgMusic.addEventListener('error', (e) => {
+    console.error('Audio loading error:', e.target.error);
+    isPlaying = false;
+    updatePlayPauseButton();
+});
