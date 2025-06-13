@@ -426,7 +426,15 @@ function displaySelectedItems(items) {
             <span>${item.name} x ${item.quantity}</span>
             <span>₹${item.total}</span>
         </div>
-    `).join('');
+    `).join('') + `
+        <div class="total-section" style="margin-top: 20px; border-top: 1px solid #ddd; padding-top: 15px;">
+            <div class="payment-options" style="margin-top: 15px; display: flex; justify-content: center; gap: 10px;">
+                <button onclick="initiateUPIPayment(${totalAmount.textContent})" class="upi-btn" style="background-color: #5F259F; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: 500;">
+                    Pay with UPI
+                </button>
+            </div>
+        </div>
+    `;
 }
 
 // Generate and display invoice
@@ -509,7 +517,7 @@ generateInvoiceBtn.addEventListener('click', () => {
                 <div style="text-align: center; margin-top: 20px;">
                     <p style="font-size: 14px;">Thank you for your business!</p>
                     <div style="margin-top: 15px;">
-                        <button id="upi-payment-btn" class="upi-btn" onclick="initiateUPIPayment(${total})">Pay with UPI</button>
+                        <button id="upi-payment-btn" class="upi-btn" onclick="initiateUPIPayment(${totalAmount.textContent})">Pay with UPI</button>
                     </div>
                 </div>
             </div>
