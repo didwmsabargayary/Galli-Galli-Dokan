@@ -508,6 +508,9 @@ generateInvoiceBtn.addEventListener('click', () => {
                 <hr style="border: none; border-top: 1px solid #ddd; margin: 10px 0;">
                 <div style="text-align: center; margin-top: 20px;">
                     <p style="font-size: 14px;">Thank you for your business!</p>
+                    <div style="margin-top: 15px;">
+                        <button id="upi-payment-btn" class="upi-btn" onclick="initiateUPIPayment(${total})">Pay with UPI</button>
+                    </div>
                 </div>
             </div>
         `;
@@ -829,3 +832,17 @@ bgMusic.addEventListener('error', (e) => {
     isPlaying = false;
     updatePlayPauseButton();
 });
+
+// Add UPI payment function
+function initiateUPIPayment(amount) {
+    // Replace 'your-upi-id' with your actual UPI ID
+    const upiId = '9864728992@okbizaxis';
+    const merchantName = 'Galli Galli Dokand';
+    const transactionNote = 'Payment for purchase';
+    
+    // Create UPI URL
+    const upiUrl = `upi://pay?pa=${upiId}&pn=${encodeURIComponent(merchantName)}&tr=${Date.now()}&am=${amount}&cu=INR&tn=${encodeURIComponent(transactionNote)}`;
+    
+    // Open UPI payment
+    window.location.href = upiUrl;
+}
