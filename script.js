@@ -15,8 +15,8 @@ const menuItems = [
     // { id: 8, name: 'Roti (रोटी)', price: 10, image: 'roti.webp' },         
     { id: 11, name: 'Pan (गय पाथै)', price: 5, image: 'goy.jpeg' },
     { id: 15, name: 'Imli Kick', price: 1, image: 'em.jpeg' },
-    { id: 17, name: 'MAAZA', price: 1, image: 'maaza.jpeg' },
-    { id: 18, name: 'Fanta', price: 1, image: 'fanta.jpeg' }
+    { id: 17, name: 'MAAZA', price: 20, image: 'maaza.jpeg' },
+    { id: 18, name: 'Fanta', price: 20, image: 'fanta.jpeg' }
     //{ id: 12, name: 'Puri (पुरी)', price: 10, image: 'puri.jpg' },
    // { id: 13, name: 'Sugar Cane Juice (खुसेर बिदै)', price: 20, image: 'suger.jpg' }
    // { id: 14, name: 'Chow Mein (चाउ मेन)', price: 60, image: 'R.jpg' },
