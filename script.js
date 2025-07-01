@@ -12,7 +12,7 @@ const menuItems = [
     { id: 6, name: 'Water Bottle (दै बोतल)', price: 10, image: 'water.jpeg' },
     //{ id: 3, name: 'Porota (परोठा)', price: 20, image: 'porota.jpg' },
     { id: 5, name: 'Cigarette (चिगरेट)', price: 10, image: 'ch.jpg' },
-    // { id: 8, name: 'Roti (रोटी)', price: 10, image: 'roti.webp' },         
+    { id: 8, name: 'Roti (रोटी)', price: 10, image: 'roti.webp' },         
     { id: 11, name: 'Pan (गय पाथै)', price: 5, image: 'goy.jpeg' },
     { id: 15, name: 'Imli Kick', price: 1, image: 'em.jpeg' },
     { id: 17, name: 'MAAZA', price: 20, image: 'maaza.jpeg' },
