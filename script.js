@@ -5,7 +5,7 @@ const menuItems = [
     { id: 15, name: 'Biscuit (बिस्कुट)', price: 15, image: 'bis.jpeg' },
     { id: 10, name: 'Papor (पापोर)', price: 5, image: 'papor.jpeg' },
     { id: 4, name: 'Guguni (गुगुनी)', price: 10, image: 'guguni.jpeg' },
-    { id: 16, name: 'Jhal Muri (जाल मुरि)', price: 10, image: 'JH.jpeg' },
+    //{ id: 16, name: 'Jhal Muri (जाल मुरि)', price: 10, image: 'JH.jpeg' },
     //{ id: 3, name: 'Porota (परोठा)', price: 20, image: 'porota.jpg' },
     { id: 7, name: 'Pan Egg (दावदै)', price: 15, image: 'egg.jpeg' },
     { id: 9, name: 'Maggi (मेगि)', price: 20, image: 'Maggi.jpg' },
