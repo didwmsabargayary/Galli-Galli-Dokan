@@ -6,7 +6,7 @@ const menuItems = [
     { id: 10, name: 'Papor (पापोर)', price: 5, image: 'papor.jpeg' },
     { id: 4, name: 'Guguni (गुगुनी)', price: 10, image: 'guguni.jpeg' },
     //{ id: 16, name: 'Jhal Muri (जाल मुरि)', price: 10, image: 'JH.jpeg' },
-    //{ id: 3, name: 'Porota (परोठा)', price: 20, image: 'porota.jpg' },
+    { id: 3, name: 'Porota (परोठा)', price: 20, image: 'porota.jpg' },
     { id: 7, name: 'Pan Egg (दावदै)', price: 15, image: 'egg.jpeg' },
     { id: 9, name: 'Maggi (मेगि)', price: 20, image: 'Maggi.jpg' },
     { id: 6, name: 'Water Bottle (दै बोतल)', price: 10, image: 'water.jpeg' },
@@ -15,10 +15,12 @@ const menuItems = [
     //{ id: 8, name: 'Roti (रोटी)', price: 10, image: 'roti.webp' },         
     { id: 11, name: 'Pan (गय पाथै)', price: 5, image: 'goy.jpeg' },
     { id: 15, name: 'Imli Kick', price: 1, image: 'em.jpeg' },
-    { id: 17, name: 'MAAZA', price: 20, image: 'maaza.jpeg' }
+    { id: 17, name: 'MAAZA', price: 20, image: 'maaza.jpeg' },
+    { id: 19, name: 'TREX', price: 20, image: 'x1.jpeg' },
     //{ id: 18, name: 'Fanta', price: 20, image: 'fanta.jpeg' }
     //{ id: 12, name: 'Puri (पुरी)', price: 10, image: 'puri.jpg' },
-   // { id: 13, name: 'Sugar Cane Juice (खुसेर बिदै)', price: 20, image: 'suger.jpg' }
+    { id: 13, name: 'Sugar Cane Juice (खुसेर बिदै)', price: 20, image: 'suger.jpg' }
+
    // { id: 14, name: 'Chow Mein (चाउ मेन)', price: 60, image: 'R.jpg' },
     
 ];
