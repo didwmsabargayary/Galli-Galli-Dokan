@@ -17,10 +17,9 @@ const menuItems = [
     { id: 15, name: 'Imli Kick', price: 1, image: 'em.jpeg' },
    // { id: 17, name: 'MAAZA', price: 20, image: 'maaza.jpeg' },
     { id: 19, name: 'TREX', price: 10, image: 'x1.jpeg' },
-    { id: 18, name: 'Fanta', price: 20, image: 'fanta.jpeg' }
+    { id: 18, name: 'Fanta', price: 20, image: 'fanta.jpeg' },
     //{ id: 12, name: 'Puri (पुरी)', price: 10, image: 'puri.jpg' },
     { id: 13, name: 'Sugar Cane Juice (खुसेर बिदै)', price: 20, image: 'suger.jpg' }
-
    // { id: 14, name: 'Chow Mein (चाउ मेन)', price: 60, image: 'R.jpg' },
     
 ];
